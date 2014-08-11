@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+    <h2 class="sub-header">用户注册</h2>
+
+
+
+    <form action="/register/" method="POST" style="width:300px">
+
+      <div class="form-group">
+        <label>用户名</label>
+        <input type="text" class="form-control" name="username" >
+      </div>
+      <div class="form-group">
+        <label>密码</label>
+        <input type="password" class="form-control" name="password1" >
+      </div>
+      <div class="form-group">
+        <label>重复密码</label>
+        <input type="password" class="form-control" name="password2" >
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width:100px">注册</button>
+
+    </form>
+
+
+
+
+    <script>
+        $("#loginpage").addClass('active')
+        $(".tablesorter").tablesorter({
+            widgets: ['zebra']
+        })
+        
+
+    </script>
+
+{% endblock %}
+

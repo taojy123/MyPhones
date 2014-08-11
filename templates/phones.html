@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+    <h2 class="sub-header">对账表</h2>
+
+
+    <table class="tablesorter">
+        <thead>
+            <tr>
+                <th>日期</th>
+                <th>品牌</th>
+                <th>型号</th>
+                <th>序列号</th>
+                <th>进价</th>
+                <th>编号</th>
+                <th>销售价</th>
+                <th>销售日期</th>
+                <th>已结算</th>
+                <th>备注</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in rs %}
+                <tr>
+                    <td>{{ r.time|date:"Y-m-d" }}</td>
+                    <td>{{ r.brand }}</td>
+                    <td>{{ r.pattern }}</td>
+                    <td>{{ r.sn }}</td>
+                    <td>{{ r.price_in }}</td>
+                    <td>{{ r.number }}</td>
+                    <td>{{ r.price_out }}</td>
+                    <td>{{ r.time_out|date:"Y-m-d" }}</td>
+                    <td>
+                      {% if r.settled %}
+                        √
+                      {% else %}
+                        ×
+                      {% endif %}
+                    <td>{{ r.remark }}</td>
+                    <td>
+                        {% if r.settled %}
+                          <a href="/phone_unsettled/?id={{ r.id }}" class="btn btn-xs btn-warning">标记未结算</a>
+                        {% else %}
+                          <a href="/phone_settled/?id={{ r.id }}" class="btn btn-xs btn-success">标记已结算</a>
+                        {% endif %}
+                        <a href="/phone_del/?id={{ r.id }}" onclick="return confirm('确定要删除？')" class="btn btn-xs btn-danger">删除</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+
+    <script>
+        $("#phones").addClass('active')
+        $(".tablesorter").tablesorter({
+            widgets: ['zebra']
+        })
+        
+
+    </script>
+
+{% endblock %}
+
