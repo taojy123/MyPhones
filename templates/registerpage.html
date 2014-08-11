@@ -29,10 +29,14 @@
 
 
     <script>
-        $("#loginpage").addClass('active')
+        $("#registerpage").addClass('active')
         $(".tablesorter").tablesorter({
             widgets: ['zebra']
         })
+
+        {% if msg %}
+            alert("{{ msg }}")
+        {% endif %}
         
 
     </script>

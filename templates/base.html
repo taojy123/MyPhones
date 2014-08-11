@@ -52,13 +52,15 @@
           <ul class="nav nav-sidebar">
             <li id="index"><a href="/">账目录入</a></li>   <!-- class="active" -->
             <li id="phones"><a href="/phones">对账表</a></li>
-            <li id="admin"><a href="/admin">用户管理</a></li>
-            <li id="registerpage"><a href="/registerpage">用户注册</a></li>
-            {% if request.user.is_authenticated %}
-              <li><a href="/logout">登出用户</a></li>
-            {% else %}
-              <li id="loginpage"><a href="/loginpage">用户登陆</a></li>
+            {% if request.user.is_superuser %}
+                <li id="admin"><a href="/admin">用户管理</a></li>
             {% endif %}
+            {% if request.user.is_authenticated %}
+                <li><a href="/logout">登出 {{ request.user.username }}</a></li>
+            {% else %}
+                <li id="loginpage"><a href="/loginpage">用户登陆</a></li>
+            {% endif %}
+              <li id="registerpage"><a href="/registerpage">用户注册</a></li>
           </ul>
         </div>
 

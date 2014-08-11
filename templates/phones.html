@@ -8,6 +8,7 @@
     <table class="tablesorter">
         <thead>
             <tr>
+                <th>所属用户</th>
                 <th>日期</th>
                 <th>品牌</th>
                 <th>型号</th>
@@ -18,12 +19,15 @@
                 <th>销售日期</th>
                 <th>已结算</th>
                 <th>备注</th>
-                <th>操作</th>
+                {% if request.user.is_superuser %}
+                    <th>操作</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
             {% for r in rs %}
                 <tr>
+                    <td>{{ r.user.username }}</td>
                     <td>{{ r.time|date:"Y-m-d" }}</td>
                     <td>{{ r.brand }}</td>
                     <td>{{ r.pattern }}</td>
@@ -38,15 +42,18 @@
                       {% else %}
                         ×
                       {% endif %}
-                    <td>{{ r.remark }}</td>
-                    <td>
-                        {% if r.settled %}
-                          <a href="/phone_unsettled/?id={{ r.id }}" class="btn btn-xs btn-warning">标记未结算</a>
-                        {% else %}
-                          <a href="/phone_settled/?id={{ r.id }}" class="btn btn-xs btn-success">标记已结算</a>
-                        {% endif %}
-                        <a href="/phone_del/?id={{ r.id }}" onclick="return confirm('确定要删除？')" class="btn btn-xs btn-danger">删除</a>
                     </td>
+                    <td>{{ r.remark }}</td>
+                    {% if request.user.is_superuser %}
+                        <td>
+                            {% if r.settled %}
+                                <a href="/phone_unsettled/?id={{ r.id }}" class="btn btn-xs btn-warning">标记未结算</a>
+                            {% else %}
+                                <a href="/phone_settled/?id={{ r.id }}" class="btn btn-xs btn-success">标记已结算</a>
+                            {% endif %}
+                            <a href="/phone_del/?id={{ r.id }}" onclick="return confirm('确定要删除？')" class="btn btn-xs btn-danger">删除</a>
+                        </td>
+                    {% endif %}
                 </tr>
             {% endfor %}
         </tbody>

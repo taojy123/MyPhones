@@ -64,6 +64,8 @@ def phone_add(request):
 @login_required(login_url="/loginpage")
 def phones(request):
     rs = Phone.objects.order_by("-id")
+    if not request.user.is_superuser:
+        rs = rs.filter(user=request.user)
     return render_to_response('phones.html', locals())
 
 
@@ -92,6 +94,43 @@ def phone_unsettled(request):
     return HttpResponseRedirect("/phones")
 
 
+@login_required(login_url="/loginpage")
+def admin(request):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect("/")
+    rs = User.objects.all()
+    return render_to_response('admin.html', locals())
+
+
+@login_required(login_url="/loginpage")
+def setpwd(request):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect("/")
+    id = request.REQUEST.get("id")
+    pwd = request.REQUEST.get("pwd")
+    user = User.objects.get(id=id)
+    user.set_password(pwd)
+    user.save()
+    return HttpResponseRedirect("/admin")
+
+
+@login_required(login_url="/loginpage")
+def setadmin(request):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect("/")
+    id = request.REQUEST.get("id")
+    user = User.objects.get(id=id)
+    user.is_superuser = True
+    user.save()
+    return HttpResponseRedirect("/admin")
+
+
+@login_required(login_url="/loginpage")
+def user_del(request):
+    id = request.REQUEST.get("id")
+    User.objects.filter(id=id).delete()
+    return HttpResponseRedirect("/admin")
+
 
 
 
@@ -99,6 +138,9 @@ def phone_unsettled(request):
 
 def loginpage(request):
     return render_to_response('loginpage.html', locals())
+
+def registerpage(request):
+    return render_to_response('registerpage.html', locals())
 
 def login(request):
     username = request.REQUEST.get('username', '')
@@ -114,14 +156,21 @@ def logout(request):
     return HttpResponseRedirect("/")
 
 def register(request):
+    msg = ""
     username = request.REQUEST.get('username')
     password1 = request.REQUEST.get('password1')
     password2 = request.REQUEST.get('password2')
     if username and password1 and password2:
-        user = user()
-        user.username = username
-        user.password = password1
-        user.save()
-    return HttpResponseRedirect("/")
+        if User.objects.filter(username=username):
+            msg = "该用户名已被注册"
+            return render_to_response('registerpage.html', locals())
+        if password1 == password2:
+            user = User()
+            user.username = username
+            user.set_password(password1)
+            user.save()
+            return HttpResponseRedirect("/")
+    msg = "输入有误，请重新输入"
+    return render_to_response('registerpage.html', locals())
 
 #======================================================================
