@@ -14,6 +14,7 @@
     <script src="/static/js/jquery-1.10.2.js"></script>
     <script src="/static/js/bootstrap.min.js"></script>
     <script src="/static/js/jquery.tablesorter.js"></script>
+    <script src="/static/js/jquery.cookie.js"></script>
 
   </head>
 
@@ -27,7 +28,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="/">手机销售对账系统 (测试版本)</a>
+          <a class="navbar-brand" href="/">手机销售对账系统</a>
         </div>
         <div class="navbar-collapse collapse">
         	<!--
@@ -50,7 +51,9 @@
 
         <div class="col-sm-3 col-md-2 sidebar" style="display:block;">
           <ul class="nav nav-sidebar">
-            <li id="index"><a href="/">账目录入</a></li>   <!-- class="active" -->
+            {% if request.user.is_superuser %}
+                <li id="index"><a href="/">账目录入</a></li>   <!-- class="active" -->
+            {% endif %}
             <li id="phones"><a href="/phones">对账表</a></li>
             {% if request.user.is_superuser %}
                 <li id="admin"><a href="/admin">用户管理</a></li>

@@ -12,7 +12,12 @@ import uuid
 
 @login_required(login_url="/loginpage")
 def index(request):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect("/phones")
     show_time = time.strftime("%Y-%m-%d")
+    users = User.objects.all()
+    if Phone.objects.count():
+        default_user = Phone.objects.order_by("-id")[0].user
     return render_to_response('index.html', locals())
 
 
@@ -29,13 +34,11 @@ def phone_add(request):
     settled = request.REQUEST.get("settled", False)
     remark = request.REQUEST.get("remark")
 
-    if request.user.is_authenticated():
-        user = request.user
+    user_id = request.REQUEST.get("user_id")
+    if user_id:
+        user = User.objects.get(id=user_id)
     else:
         user = None
-
-    if len(Phone.objects.filter(user=user)) >= 20:
-        return HttpResponseRedirect("/")
 
     phone = Phone()
     phone.user = user
@@ -55,23 +58,29 @@ def phone_add(request):
 
 
 @login_required(login_url="/loginpage")
-def phones(request):
+def phones(request, user_id=""):
     time = request.REQUEST.get("time", "")
     brand = request.REQUEST.get("brand", "")
     pattern = request.REQUEST.get("pattern", "")
+    sn = request.REQUEST.get("sn", "")
     number = request.REQUEST.get("number", "")
-    price_out = request.REQUEST.get("price_out", "")
     settled = request.REQUEST.get("settled", "")
 
-    if time or brand or pattern or number or price_out or settled:
+    if time or brand or pattern or number or sn or settled:
         filter_flag = "block"
     else:
         filter_flag = "none"
 
+    users = User.objects.all()
 
     rs = Phone.objects.order_by("-id")
+
+    if user_id:
+        user = User.objects.get(id=user_id)
+        rs = rs.filter(user=user)
+
     if not request.user.is_superuser:
-        rs = rs.filter(user__icontains=request.user)
+        rs = rs.filter(user=request.user)
 
     if time:
         rs = rs.filter(time__icontains=time)
@@ -82,15 +91,34 @@ def phones(request):
     if pattern:
         rs = rs.filter(pattern__icontains=pattern)
 
+    if sn:
+        rs = rs.filter(sn__icontains=sn)
+
     if number:
         rs = rs.filter(number__icontains=number)
-
-    if price_out:
-        rs = rs.filter(price_out__icontains=price_out)
 
     if settled:
         settled = eval(settled)
         rs = rs.filter(settled=settled)
+
+
+    total_in = 0
+    total_out = 0
+    for r in rs:
+        if r.settled:
+            continue
+        try:
+            price_in = float(r.price_in)
+        except:
+            price_in = 0
+        try:
+            price_out = float(r.price_out)
+        except:
+            price_out = 0
+        total_in += price_in
+        total_out += price_out
+    total_in = "%.2f"%total_in
+    total_out = "%.2f"%total_out
 
     return render_to_response('phones.html', locals())
 
@@ -98,26 +126,58 @@ def phones(request):
 @login_required(login_url="/loginpage")
 def phone_del(request):
     id = request.REQUEST.get("id")
+    uid = request.REQUEST.get("uid", "")
     Phone.objects.filter(id=id).delete()
-    return HttpResponseRedirect("/phones")
+    return HttpResponseRedirect("/phones/" + uid)
 
 
 @login_required(login_url="/loginpage")
 def phone_settled(request):
     id = request.REQUEST.get("id")
+    uid = request.REQUEST.get("uid", "")
     phone = Phone.objects.get(id=id)
     phone.settled = True
     phone.save()
-    return HttpResponseRedirect("/phones")
+    return HttpResponseRedirect("/phones/" + uid)
 
 
 @login_required(login_url="/loginpage")
 def phone_unsettled(request):
     id = request.REQUEST.get("id")
+    uid = request.REQUEST.get("uid", "")
     phone = Phone.objects.get(id=id)
     phone.settled = False
     phone.save()
-    return HttpResponseRedirect("/phones")
+    return HttpResponseRedirect("/phones/" + uid)
+
+
+@login_required(login_url="/loginpage")
+def phone_update(request):
+    id = request.REQUEST.get("id", "")
+    uid = request.REQUEST.get("uid", "")
+    time = request.REQUEST.get("time")
+    brand = request.REQUEST.get("brand")
+    pattern = request.REQUEST.get("pattern")
+    sn = request.REQUEST.get("sn")
+    price_in = request.REQUEST.get("price_in")
+    number = request.REQUEST.get("number")
+    price_out = request.REQUEST.get("price_out")
+    time_out = request.REQUEST.get("time_out")
+    remark = request.REQUEST.get("remark")
+
+    phone = Phone.objects.get(id=id)
+    phone.time = time
+    phone.brand = brand
+    phone.pattern = pattern
+    phone.sn = sn
+    phone.price_in = price_in
+    phone.number = number
+    phone.price_out = price_out
+    phone.time_out = time_out
+    phone.remark = remark
+    phone.save()
+
+    return HttpResponseRedirect("/phones/" + uid)
 
 
 @login_required(login_url="/loginpage")

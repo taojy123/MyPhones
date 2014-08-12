@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+    <h2 class="sub-header">用户管理</h2>
+
+
+    <table class="tablesorter">
+        <thead>
+            <tr>
+                <th>用户名</th>
+                <th>创建时间</th>
+                <th>管理员</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in rs %}
+                <tr>
+                    <td>{{ r.username }}</td>
+                    <td>{{ r.date_joined|date:"Y-m-d" }}</td>
+                    <td>
+                        {% if r.is_superuser %}
+                            √
+                        {% else %}
+                            ×
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="#" data-id="{{ r.id }}" class="btn btn-xs btn-primary setpwd">修改密码</a>
+                        <a href="/user_del/?id={{ r.id }}" onclick="return confirm('确定要删除？')" class="btn btn-xs btn-danger">删除</a>
+
+                        {% if not r.is_superuser %}
+                            <a href="/setadmin/?id={{ r.id }}" onclick="return confirm('确定要设置为管理员？')" class="btn btn-xs btn-primary">设置为管理员</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+
+    <script>
+        $("#admin").addClass('active')
+        $(".tablesorter").tablesorter({
+            widgets: ['zebra']
+        })
+
+        $(function(){
+            $(".setpwd").click(function(){
+                var id = $(this).attr("data-id")
+                var pwd = prompt("请输入你要设置的新密码")
+                top.location.href = "/setpwd/?id=" + id + "&pwd=" + pwd
+            })
+        })
+        
+
+    </script>
+
+{% endblock %}
+

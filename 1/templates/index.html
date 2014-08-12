@@ -7,6 +7,16 @@
     <form action="/phone_add/" method="POST" class="form-horizontal">
 
       <div class="form-group">
+        <label  class="col-sm-2 control-label" >所属用户</label>
+        <select class="form-control"  style="display:inline;width:auto;" name="user_id">
+            <option value="{{ default_user.id }}">{{ default_user.username }}</option>
+            {% for user in users %}
+                <option value="{{ user.id }}">{{ user.username }}</option>
+            {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
         <label  class="col-sm-2 control-label" >日期</label>
         <input type="text" class="form-control"  style="display:inline;width:auto;" name="time" value="{{ show_time }}">
       </div>

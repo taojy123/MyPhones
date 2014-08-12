@@ -1,0 +1,7 @@
+libraries:
+- name: "django"
+  version: "1.4"
+- name: "numpy"
+  version: "1.6.1"
+- name: "sqlalchemy"
+  version: "0.7.3"
