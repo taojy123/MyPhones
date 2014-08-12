@@ -29,20 +29,13 @@ def phone_add(request):
     settled = request.REQUEST.get("settled", False)
     remark = request.REQUEST.get("remark")
 
-    if time:
-        time = datetime.datetime.strptime(time, "%Y-%m-%d")
-    else:
-        time = None
-
-    if time_out:
-        time_out = datetime.datetime.strptime(time_out, "%Y-%m-%d")
-    else:
-        time_out = None
-
     if request.user.is_authenticated():
         user = request.user
     else:
         user = None
+
+    if len(Phone.objects.filter(user=user)) >= 20:
+        return HttpResponseRedirect("/")
 
     phone = Phone()
     phone.user = user
@@ -63,9 +56,42 @@ def phone_add(request):
 
 @login_required(login_url="/loginpage")
 def phones(request):
+    time = request.REQUEST.get("time", "")
+    brand = request.REQUEST.get("brand", "")
+    pattern = request.REQUEST.get("pattern", "")
+    number = request.REQUEST.get("number", "")
+    price_out = request.REQUEST.get("price_out", "")
+    settled = request.REQUEST.get("settled", "")
+
+    if time or brand or pattern or number or price_out or settled:
+        filter_flag = "block"
+    else:
+        filter_flag = "none"
+
+
     rs = Phone.objects.order_by("-id")
     if not request.user.is_superuser:
-        rs = rs.filter(user=request.user)
+        rs = rs.filter(user__icontains=request.user)
+
+    if time:
+        rs = rs.filter(time__icontains=time)
+
+    if brand:
+        rs = rs.filter(brand__icontains=brand)
+
+    if pattern:
+        rs = rs.filter(pattern__icontains=pattern)
+
+    if number:
+        rs = rs.filter(number__icontains=number)
+
+    if price_out:
+        rs = rs.filter(price_out__icontains=price_out)
+
+    if settled:
+        settled = eval(settled)
+        rs = rs.filter(settled=settled)
+
     return render_to_response('phones.html', locals())
 
 

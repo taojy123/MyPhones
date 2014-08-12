@@ -4,52 +4,53 @@
 {% block content %}
     <h2 class="sub-header">账目录入</h2>
 
-
-
-    <form action="/phone_add/" method="POST" style="width:300px">
+    <form action="/phone_add/" method="POST" class="form-horizontal">
 
       <div class="form-group">
-        <label>日期</label>
-        <input type="text" class="form-control" name="time" value="{{ show_time }}">
+        <label  class="col-sm-2 control-label" >日期</label>
+        <input type="text" class="form-control"  style="display:inline;width:auto;" name="time" value="{{ show_time }}">
       </div>
       <div class="form-group">
-        <label>品牌</label>
-        <input type="text" class="form-control" name="brand" >
+        <label  class="col-sm-2 control-label" >品牌</label>
+        <input type="text" class="form-control"  style="display:inline;width:auto;" name="brand" >
       </div>
       <div class="form-group">
-        <label>型号</label>
-        <input type="text" class="form-control" name="pattern" >
+        <label  class="col-sm-2 control-label" >型号</label>
+        <input type="text" class="form-control"  style="display:inline;width:auto;" name="pattern" >
       </div>
       <div class="form-group">
-        <label>序列号</label>
-        <input type="text" class="form-control" name="sn" >
+        <label  class="col-sm-2 control-label" >序列号</label>
+        <input type="text" class="form-control"  style="display:inline;width:auto;" name="sn" >
       </div>
       <div class="form-group">
-        <label>进价</label>
-        <input type="text" class="form-control" name="price_in" >
+        <label  class="col-sm-2 control-label" >进价</label>
+        <input type="text" class="form-control"  style="display:inline;width:auto;" name="price_in" >
       </div>
       <div class="form-group">
-        <label>编号</label>
-        <input type="text" class="form-control" name="number" >
+        <label  class="col-sm-2 control-label" >编号</label>
+        <input type="text" class="form-control"  style="display:inline;width:auto;" name="number" >
       </div>
       <div class="form-group">
-        <label>销售价</label>
-        <input type="text" class="form-control" name="price_out" >
+        <label  class="col-sm-2 control-label" >销售价</label>
+        <input type="text" class="form-control"  style="display:inline;width:auto;" name="price_out" >
       </div>
       <div class="form-group">
-        <label>销售日期</label>
-        <input type="text" class="form-control" name="time_out" >
+        <label  class="col-sm-2 control-label" >销售日期</label>
+        <input type="text" class="form-control"  style="display:inline;width:auto;" name="time_out" >
       </div>
       <div class="form-group">
-        <label>已结算</label>
-        <p><input type="checkbox" name="settled" ></p>
+        <label  class="col-sm-2 control-label" >已结算</label>
+        <input type="checkbox" name="settled" >
       </div>
       <div class="form-group">
-        <label>备注</label>
-        <input type="text" class="form-control" name="remark" >
+        <label  class="col-sm-2 control-label" >备注</label>
+        <input type="text" class="form-control"  style="display:inline;width:auto;" name="remark" >
+      </div>
+      <div class="form-group">
+        <label  class="col-sm-2 control-label" ></label>
+        <button type="submit" class="btn btn-primary" style="width:100px">提交</button>
       </div>
 
-      <button type="submit" class="btn btn-primary" style="width:100px">提交</button>
 
     </form>
 
