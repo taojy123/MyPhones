@@ -22,23 +22,29 @@
       </div>
       <div class="form-group">
         <label  class="col-sm-2 control-label" >品牌</label>
-        <input type="text" class="form-control"  style="display:inline;width:auto;" name="brand" >
+        <input type="text" class="form-control"  style="display:inline;width:auto;" name="brand" value="{{ default_brand }}" id="brand">
+        <select class="form-control"  style="display:inline;width:auto;" id="brand_select">
+            <option value="{{ default_brand }}">{{ default_brand }}</option>
+            {% for b in brands %}
+                <option value="{{ b }}">{{ b }}</option>
+            {% endfor %}
+        </select>
       </div>
       <div class="form-group">
         <label  class="col-sm-2 control-label" >型号</label>
         <input type="text" class="form-control"  style="display:inline;width:auto;" name="pattern" >
       </div>
       <div class="form-group">
-        <label  class="col-sm-2 control-label" >序列号</label>
-        <input type="text" class="form-control"  style="display:inline;width:auto;" name="sn" >
+        <label  class="col-sm-2 control-label" >编号</label>
+        <input type="text" class="form-control"  style="display:inline;width:auto;" name="number" >
       </div>
       <div class="form-group">
         <label  class="col-sm-2 control-label" >进价</label>
         <input type="text" class="form-control"  style="display:inline;width:auto;" name="price_in" >
       </div>
       <div class="form-group">
-        <label  class="col-sm-2 control-label" >编号</label>
-        <input type="text" class="form-control"  style="display:inline;width:auto;" name="number" >
+        <label  class="col-sm-2 control-label" >序列号</label>
+        <input type="text" class="form-control"  style="display:inline;width:auto;" name="sn" >
       </div>
       <div class="form-group">
         <label  class="col-sm-2 control-label" >销售价</label>
@@ -71,6 +77,10 @@
         $("#index").addClass('active')
         $(".tablesorter").tablesorter({
             widgets: ['zebra']
+        })
+
+        $("#brand_select").change(function(){
+          $("#brand").val($("#brand_select").val())
         })
         
 

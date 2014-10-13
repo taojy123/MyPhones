@@ -6,13 +6,22 @@
 
     {% if request.user.is_superuser %}
         <label>指定用户:</label>
-        <a href="/phones" class="btn btn-xs btn-warning">所有用户</a>
+        <a href="/phones/_{{ brand }}" class="btn btn-xs btn-warning">所有用户</a>
         {% for user in users %}
-            <a href="/phones/{{ user.id }}" class="btn btn-xs btn-warning">{{ user.username }}</a>
+            <a href="/phones/{{ user.id }}_{{ brand }}" class="btn btn-xs btn-warning">{{ user.username }}</a>
         {% endfor %}
         <br/>
         <br/>
     {% endif %}
+
+    <label>指定品牌:</label>
+    <a href="/phones/{{ user_id }}_" class="btn btn-xs btn-warning">所有品牌</a>
+    {% for b in brands %}
+        <a href="/phones/{{ user_id }}_{{ b }}" class="btn btn-xs btn-warning">{{ b }}</a>
+    {% endfor %}
+    <br/>
+    <br/>
+
 
     <a href="#" id="settled_show" class="btn btn-xs btn-default">显示/隐藏已结算</a>
     <a href="#" onclick="$('#filter_form').toggle()" class="btn btn-xs btn-default">检索选项</a>
@@ -31,12 +40,12 @@
             <input type="text" class="form-control" style="display:inline;width:auto;" name="pattern" value="{{ pattern }}">
         </div>
         <div class="form-group">
-            <label class="col-sm-2 control-label">序列号</label>
-            <input type="text" class="form-control" style="display:inline;width:auto;" name="sn" value="{{ sn }}">
-        </div>
-        <div class="form-group">
             <label class="col-sm-2 control-label">编号</label>
             <input type="text" class="form-control" style="display:inline;width:auto;" name="number" value="{{ number }}">
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">序列号</label>
+            <input type="text" class="form-control" style="display:inline;width:auto;" name="sn" value="{{ sn }}">
         </div>
         <div class="form-group">
             <label class="col-sm-2 control-label">是否结算</label>
@@ -58,9 +67,9 @@
                 <th>日期</th>
                 <th>品牌</th>
                 <th>型号</th>
-                <th>序列号</th>
-                <th>进价</th>
                 <th>编号</th>
+                <th>进价</th>
+                <th>序列号</th>
                 <th>销售价</th>
                 <th>销售日期</th>
                 <th>已结算</th>
@@ -93,16 +102,16 @@
                     {% if request.user.is_superuser %}
                         <td>
                             {% if r.settled %}
-                                <a href="/phone_unsettled/?id={{ r.id }}&uid={{ user_id }}" class="btn btn-xs btn-warning">标记未结算</a>
+                                <a href="/phone_unsettled/?id={{ r.id }}&status={{ status }}" class="btn btn-xs btn-warning">标记未结算</a>
                             {% else %}
-                                <a href="/phone_settled/?id={{ r.id }}&uid={{ user_id }}" class="btn btn-xs btn-success">标记已结算</a>
+                                <a href="/phone_settled/?id={{ r.id }}&status={{ status }}" class="btn btn-xs btn-success">标记已结算</a>
                             {% endif %}
-                            <a href="/phone_del/?id={{ r.id }}&uid={{ user_id }}" onclick="return confirm('确定要删除？')" class="btn btn-xs btn-danger">删除</a>
+                            <a href="/phone_del/?id={{ r.id }}&status={{ status }}" onclick="return confirm('确定要删除？')" class="btn btn-xs btn-danger">删除</a>
 
                             <a style="cursor: pointer" onclick="$(this).next().toggle()" class="btn btn-xs btn-primary">修改</a>
                             <form action="/phone_update/" style="width:200px;display: none" method="POST">
                                 <input type="hidden" name="id" value="{{ r.id }}"  />
-                                <input type="hidden" name="uid" value="{{ user_id }}"  />
+                                <input type="hidden" name="status" value="{{ status }}"  />
                                 日期:
                                 <input type="text" name="time" value="{{ r.time }}"  />
                                 <br/>
@@ -112,14 +121,14 @@
                                 型号:
                                 <input type="text" name="pattern" value="{{ r.pattern }}"  />
                                 <br/>
-                                序列号:
-                                <input type="text" name="sn" value="{{ r.sn }}"  />
+                                编号:
+                                <input type="text" name="number" value="{{ r.number }}"  />
                                 <br/>
                                 进价:
                                 <input type="text" name="price_in" value="{{ r.price_in }}"  />
                                 <br/>
-                                编号:
-                                <input type="text" name="number" value="{{ r.number }}"  />
+                                序列号:
+                                <input type="text" name="sn" value="{{ r.sn }}"  />
                                 <br/>
                                 销售价:
                                 <input type="text" name="price_out" value="{{ r.price_out }}"  />

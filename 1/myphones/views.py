@@ -16,8 +16,11 @@ def index(request):
         return HttpResponseRedirect("/phones")
     show_time = time.strftime("%Y-%m-%d")
     users = User.objects.all()
+    brands = Phone.objects.all().values_list("brand", flat=True)
+    brands = set(brands)
     if Phone.objects.count():
         default_user = Phone.objects.order_by("-id")[0].user
+        default_brand = Phone.objects.order_by("-id")[0].brand
     return render_to_response('index.html', locals())
 
 
@@ -58,7 +61,7 @@ def phone_add(request):
 
 
 @login_required(login_url="/loginpage")
-def phones(request, user_id=""):
+def phones(request, status="_"):
     time = request.REQUEST.get("time", "")
     brand = request.REQUEST.get("brand", "")
     pattern = request.REQUEST.get("pattern", "")
@@ -72,12 +75,19 @@ def phones(request, user_id=""):
         filter_flag = "none"
 
     users = User.objects.all()
+    brands = Phone.objects.all().values_list("brand", flat=True)
+    brands = set(brands)
 
     rs = Phone.objects.order_by("-id")
+
+    user_id, brand = status.split("_")
 
     if user_id:
         user = User.objects.get(id=user_id)
         rs = rs.filter(user=user)
+
+    if brand:
+        rs = rs.filter(brand=brand)
 
     if not request.user.is_superuser:
         rs = rs.filter(user=request.user)
@@ -126,35 +136,35 @@ def phones(request, user_id=""):
 @login_required(login_url="/loginpage")
 def phone_del(request):
     id = request.REQUEST.get("id")
-    uid = request.REQUEST.get("uid", "")
+    status = request.REQUEST.get("status", "")
     Phone.objects.filter(id=id).delete()
-    return HttpResponseRedirect("/phones/" + uid)
+    return HttpResponseRedirect("/phones/" + status)
 
 
 @login_required(login_url="/loginpage")
 def phone_settled(request):
     id = request.REQUEST.get("id")
-    uid = request.REQUEST.get("uid", "")
+    status = request.REQUEST.get("status", "")
     phone = Phone.objects.get(id=id)
     phone.settled = True
     phone.save()
-    return HttpResponseRedirect("/phones/" + uid)
+    return HttpResponseRedirect("/phones/" + status)
 
 
 @login_required(login_url="/loginpage")
 def phone_unsettled(request):
     id = request.REQUEST.get("id")
-    uid = request.REQUEST.get("uid", "")
+    status = request.REQUEST.get("status", "")
     phone = Phone.objects.get(id=id)
     phone.settled = False
     phone.save()
-    return HttpResponseRedirect("/phones/" + uid)
+    return HttpResponseRedirect("/phones/" + status)
 
 
 @login_required(login_url="/loginpage")
 def phone_update(request):
     id = request.REQUEST.get("id", "")
-    uid = request.REQUEST.get("uid", "")
+    status = request.REQUEST.get("status", "")
     time = request.REQUEST.get("time")
     brand = request.REQUEST.get("brand")
     pattern = request.REQUEST.get("pattern")
@@ -177,7 +187,7 @@ def phone_update(request):
     phone.remark = remark
     phone.save()
 
-    return HttpResponseRedirect("/phones/" + uid)
+    return HttpResponseRedirect("/phones/" + status)
 
 
 @login_required(login_url="/loginpage")
