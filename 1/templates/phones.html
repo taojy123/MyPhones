@@ -86,9 +86,9 @@
                     <td>{{ r.time }}</td>
                     <td>{{ r.brand }}</td>
                     <td>{{ r.pattern }}</td>
-                    <td>{{ r.sn }}</td>
-                    <td>{{ r.price_in }}</td>
                     <td>{{ r.number }}</td>
+                    <td>{{ r.price_in }}</td>
+                    <td>{{ r.sn }}</td>
                     <td>{{ r.price_out }}</td>
                     <td>{{ r.time_out }}</td>
                     <td>
@@ -154,6 +154,13 @@
         <label>总销售价：</label>  {{ total_out }}
     </p>
 
+    {% if not show_all %}
+        <p>
+            <a id="show_all" class="btn btn-primary">显示所有记录..</a>
+        </p>
+    {% endif %}
+
+
     <script>
         $("#phones").addClass('active')
         $(".tablesorter").tablesorter({
@@ -169,6 +176,17 @@
                 $(".settled").toggle()
                 show_flag = $(".settled").is(":visible")
                 $.cookie("show_flag", show_flag)
+            })
+
+            $("#show_all").click(function(){
+                var url = top.location.href
+                if(url.indexOf("?1") > -1){
+                    url += "&show_all=1"
+                }
+                else{
+                    url += "?show_all=1"
+                }
+                top.location.href = url
             })
 
         })

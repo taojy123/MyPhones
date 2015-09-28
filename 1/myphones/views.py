@@ -68,6 +68,7 @@ def phones(request, status="_"):
     sn = request.REQUEST.get("sn", "")
     number = request.REQUEST.get("number", "")
     settled = request.REQUEST.get("settled", "")
+    show_all = request.REQUEST.get("show_all", "")
 
     if time or brand or pattern or number or sn or settled:
         filter_flag = "block"
@@ -80,7 +81,10 @@ def phones(request, status="_"):
 
     rs = Phone.objects.order_by("-id")
 
-    user_id, brand = status.split("_")
+    user_id, brand_t = status.split("_")
+
+    if brand_t:
+        brand = brand_t
 
     if user_id:
         user = User.objects.get(id=user_id)
@@ -93,23 +97,32 @@ def phones(request, status="_"):
         rs = rs.filter(user=request.user)
 
     if time:
-        rs = rs.filter(time__icontains=time)
+        rs = rs.filter(time=time)
 
     if brand:
-        rs = rs.filter(brand__icontains=brand)
+        rs = rs.filter(brand=brand)
 
     if pattern:
-        rs = rs.filter(pattern__icontains=pattern)
+        rs = rs.filter(pattern=pattern)
 
     if sn:
-        rs = rs.filter(sn__icontains=sn)
+        rs = rs.filter(sn=sn)
 
     if number:
-        rs = rs.filter(number__icontains=number)
+        rs = rs.filter(number=number)
+        # rs = rs.filter(number__icontains=number)
 
     if settled:
         settled = eval(settled)
         rs = rs.filter(settled=settled)
+
+
+    if len(rs) <= 100:
+        show_all = "1"
+
+
+    if not show_all:
+        rs = rs[:100]
 
 
     total_in = 0
